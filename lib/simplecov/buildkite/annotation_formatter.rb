@@ -3,7 +3,7 @@ module SimpleCov::Buildkite
     def format(result)
       message = <<~MESSAGE
         <details>
-        <summary><strong>#{format_element(result)}</strong></summary>
+        <summary>#{format_element(result)}</summary>
         <ul>
         #{result.groups.map do |name, group|
           "<li><strong>#{name}</strong>: #{format_element(group)}</li>"
