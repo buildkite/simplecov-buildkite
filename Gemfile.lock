@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     simplecov-buildkite (0.1.0)
-      simplecov
+      simplecov (~> 0.16)
 
 GEM
   remote: https://rubygems.org/
