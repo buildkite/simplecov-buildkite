@@ -1,11 +1,16 @@
 module SimpleCov::Buildkite
   class AnnotationFormatter
     def format(result)
-      message = "**#{format_element(result)}**\n\n"
-
-      result.groups.each do |name, group|
-        message += " * **#{name}**: #{format_element(group)}\n"
-      end
+      message = <<~MESSAGE
+        <details>
+        <summary>#{format_element(result)}</summary>
+        <ul>
+        #{result.groups.map do |name, group|
+          "<li><strong>#{name}</strong>: #{format_element(group)}</li>"
+        end.join("\n")}
+        </ul>
+        </details>
+      MESSAGE
 
       if ENV["BUILDKITE"]
         system "buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", message

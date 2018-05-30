@@ -1,5 +1,12 @@
 require "bundler/setup"
-require "simplecov/buildkite"
+require "simplecov"
+
+SimpleCov.start do
+  track_files "lib/**/*.rb"
+  add_filter "/spec/"
+end
+
+require "simplecov-buildkite"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
