@@ -13,10 +13,11 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     it "outputs a nicely formatter annotation" do
       expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
         <details>
-        <summary>**100.0% coverage: 0.0 of 0.0 lines**</summary>
-
-         * **a**: 100.0% coverage: 0.0 of 0.0 lines
-         * **b**: 100.0% coverage: 0.0 of 0.0 lines
+        <summary><strong>100.0% coverage: 0.0 of 0.0 lines</strong></summary>
+        <ul>
+        <li><strong>a</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+        <li><strong>b</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+        </ul>
         </details>
       MESSAGE
     end
@@ -28,10 +29,11 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     it "creates a nicely formatted annotation" do
       expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", <<~MESSAGE)
         <details>
-        <summary>**100.0% coverage: 0.0 of 0.0 lines**</summary>
-
-         * **a**: 100.0% coverage: 0.0 of 0.0 lines
-         * **b**: 100.0% coverage: 0.0 of 0.0 lines
+        <summary><strong>100.0% coverage: 0.0 of 0.0 lines</strong></summary>
+        <ul>
+        <li><strong>a</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+        <li><strong>b</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+        </ul>
         </details>
       MESSAGE
 
