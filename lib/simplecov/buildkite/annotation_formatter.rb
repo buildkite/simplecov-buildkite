@@ -1,7 +1,7 @@
 module SimpleCov::Buildkite
   class AnnotationFormatter
     def format(result)
-      message <<~HTML
+      message = <<~MESSAGE
         <details>
         <summary>**#{format_element(result)}**</summary>
 
@@ -9,7 +9,7 @@ module SimpleCov::Buildkite
           " * **#{name}**: #{format_element(group)}"
         end.join("\n")}
         </details>
-      HTML
+      MESSAGE
 
       if ENV["BUILDKITE"]
         system "buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", message
