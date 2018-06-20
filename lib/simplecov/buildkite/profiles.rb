@@ -4,6 +4,7 @@ require 'English'
 
 module SimpleCov::Buildkite::Profiles
   SimpleCov.profiles.define 'buildkite' do
+    STDERR.puts 'SimpleCov::Buildkite profile initialising...'
     return unless ENV['BUILDKITE'] == 'true'
 
     base_branch_name = (
@@ -11,9 +12,13 @@ module SimpleCov::Buildkite::Profiles
       ENV['BUILDKITE_PIPELINE_DEFAULT_BRANCH']
     )
 
+    STDERR.puts "base_branch_name=#{base_branch_name}"
+
     if base_branch_name.nil?
       changed_files = `git diff --name-only HEAD HEAD^`.split "\n"
       return unless $CHILD_STATUS == 0
+
+      STDERR.puts "changed_files=#{changed_files}"
 
       add_group "Changed in #{ENV['BUILDKITE_COMMIT'] || 'this commit'}" do |tested_file|
         changed_files.detect do |changed_file|
