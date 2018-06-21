@@ -4,7 +4,7 @@ module SimpleCov::Buildkite::Profiles
   def self.run(*args)
     IO.popen(args, &:read).tap do
       $?.success? or fail("Command exited with status #{$?.exitstatus}: #{args.join(" ")}")
-    end
+    end.chomp
   end
 
   SimpleCov.profiles.define 'buildkite' do
@@ -18,43 +18,54 @@ module SimpleCov::Buildkite::Profiles
 
     STDERR.puts "base_branch_name=#{base_branch_name}"
 
+    current_commit = ENV['BUILDKITE_COMMIT']
+
+    STDERR.puts "current_commit=#{current_commit}"
+
+    current_commit_short = run('git',
+                               'rev-parse',
+                               '--short',
+                               current_commit)
+
+    STDERR.puts "current_commit_short=#{current_commit_short}"
+
     if base_branch_name.nil?
       changed_files = run('git',
                           'diff',
                           '--name-only',
-                          'HEAD',
-                          'HEAD^').chomp.split "\n"
+                          current_commit,
+                          "#{current_commit}^").split "\n"
 
       STDERR.puts "changed_files=#{changed_files}"
 
-      add_group "Changed in #{ENV['BUILDKITE_COMMIT'] || 'this commit'}" do |tested_file|
+      add_group "Changed in #{current_commit_short}" do |tested_file|
         changed_files.detect do |changed_file|
           tested_file.filename.ends_with?(changed_file)
         end
       end
     else
-      # run('git',
-      #     'merge-base',
-      #     '--is-ancestor',
-      #     base_branch_name,
-      #     'HEAD')
-
       merge_base = run('git',
                        'merge-base',
-                       'HEAD',
-                       base_branch_name).chomp
+                       current_commit,
+                       base_branch_name)
+
+      merge_base_short = run('git',
+                             'rev-parse',
+                             '--short',
+                             merge_base)
 
       STDERR.puts "merge_base=#{merge_base}"
+      STDERR.puts "merge_base_short=#{merge_base_short}"
 
       changed_files = run('git',
                           'diff',
                           '--name-only',
-                          'HEAD',
-                          merge_base).chomp.split "\n"
+                          current_commit,
+                          merge_base).split "\n"
 
       STDERR.puts "changed_files.count=#{changed_files.count}"
 
-      add_group "Changed from #{base_branch_name}" do |tested_file|
+      add_group "Changed in #{merge_base_short}...#{current_commit_short}" do |tested_file|
         changed_files.detect do |changed_file|
           tested_file.filename.ends_with?(changed_file)
         end
