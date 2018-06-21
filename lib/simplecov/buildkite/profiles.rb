@@ -29,21 +29,22 @@ module SimpleCov::Buildkite::Profiles
 
     STDERR.puts "current_commit_short=#{current_commit_short}"
 
-    if base_branch_name.nil?
-      changed_files = run('git',
-                          'diff',
-                          '--name-only',
-                          current_commit,
-                          "#{current_commit}^").split "\n"
+    changed_files_in_commit = run('git',
+                                  'diff',
+                                  '--name-only',
+                                  '--diff-filter=d',
+                                  current_commit,
+                                  "#{current_commit}^").split "\n"
 
-      STDERR.puts "changed_files=#{changed_files}"
+    STDERR.puts "changed_files_in_commit=#{changed_files_in_commit}"
 
-      add_group "Changed in #{current_commit_short}" do |tested_file|
-        changed_files.detect do |changed_file|
-          tested_file.filename.ends_with?(changed_file)
-        end
+    add_group "Files changed in #{current_commit_short}" do |tested_file|
+      changed_files_in_commit.detect do |changed_file|
+        tested_file.filename.ends_with?(changed_file)
       end
-    else
+    end
+
+    if base_branch_name
       merge_base = run('git',
                        'merge-base',
                        current_commit,
@@ -57,16 +58,17 @@ module SimpleCov::Buildkite::Profiles
       STDERR.puts "merge_base=#{merge_base}"
       STDERR.puts "merge_base_short=#{merge_base_short}"
 
-      changed_files = run('git',
-                          'diff',
-                          '--name-only',
-                          current_commit,
-                          merge_base).split "\n"
+      changed_files_in_branch = run('git',
+                                    'diff',
+                                    '--name-only',
+                                    '--diff-filter=d',
+                                    current_commit,
+                                    merge_base).split "\n"
 
-      STDERR.puts "changed_files.count=#{changed_files.count}"
+      STDERR.puts "changed_files_in_branch.count=#{changed_files_in_branch.count}"
 
-      add_group "Changed in #{merge_base_short}...#{current_commit_short}" do |tested_file|
-        changed_files.detect do |changed_file|
+      add_group "Files changed in #{merge_base_short}...#{current_commit_short}" do |tested_file|
+        changed_files_in_branch.detect do |changed_file|
           tested_file.filename.ends_with?(changed_file)
         end
       end
