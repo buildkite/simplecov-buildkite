@@ -23,7 +23,7 @@ module SimpleCov::Buildkite::Profiles
                           'diff',
                           '--name-only',
                           'HEAD',
-                          'HEAD^').split "\n"
+                          'HEAD^').chomp.split "\n"
 
       STDERR.puts "changed_files=#{changed_files}"
 
@@ -42,14 +42,17 @@ module SimpleCov::Buildkite::Profiles
       merge_base = run('git',
                        'merge-base',
                        'HEAD',
-                       base_branch_name)
+                       base_branch_name).chomp
+
+      STDERR.puts "merge_base=#{merge_base}"
 
       changed_files = run('git',
                           'diff',
                           '--name-only',
                           'HEAD',
-                          merge_base).split "\n"
-      return unless $CHILD_STATUS == 0
+                          merge_base).chomp.split "\n"
+
+      STDERR.puts "changed_files.count=#{changed_files.count}"
 
       add_group "Changed from #{base_branch_name}" do |tested_file|
         changed_files.detect do |changed_file|
