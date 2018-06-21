@@ -33,11 +33,11 @@ module SimpleCov::Buildkite::Profiles
         end
       end
     else
-      run('git',
-          'merge-base',
-          '--is-ancestor',
-          base_branch_name,
-          'HEAD')
+      # run('git',
+      #     'merge-base',
+      #     '--is-ancestor',
+      #     base_branch_name,
+      #     'HEAD')
 
       merge_base = run('git',
                        'merge-base',
