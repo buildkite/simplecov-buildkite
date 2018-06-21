@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
-require 'English'
-
 module SimpleCov::Buildkite::Profiles
+  def self.run(*args)
+    IO.popen(args, &:read).tap do
+      $?.success? or fail("Command exited with status #{$?.exitstatus}: #{args.join(" ")}")
+    end
+  end
+
   SimpleCov.profiles.define 'buildkite' do
     STDERR.puts 'SimpleCov::Buildkite profile initialising...'
-    return unless ENV['BUILDKITE'] == 'true'
+    fail("Not running on Buildkite") unless ENV['BUILDKITE'] == 'true'
 
     base_branch_name = (
       ENV['BUILDKITE_PULL_REQUEST_BASE_BRANCH'] ||
@@ -15,8 +19,11 @@ module SimpleCov::Buildkite::Profiles
     STDERR.puts "base_branch_name=#{base_branch_name}"
 
     if base_branch_name.nil?
-      changed_files = `git diff --name-only HEAD HEAD^`.split "\n"
-      return unless $CHILD_STATUS == 0
+      changed_files = run('git',
+                          'diff',
+                          '--name-only',
+                          'HEAD',
+                          'HEAD^').split "\n"
 
       STDERR.puts "changed_files=#{changed_files}"
 
@@ -26,13 +33,22 @@ module SimpleCov::Buildkite::Profiles
         end
       end
     else
-      `git merge-base --is-ancestor #{base_branch_name} HEAD`
-      return unless $CHILD_STATUS == 0
+      run('git',
+          'merge-base',
+          '--is-ancestor',
+          base_branch_name,
+          'HEAD')
 
-      merge_base = `git merge-base HEAD #{base_branch_name}`
-      return unless $CHILD_STATUS == 0
+      merge_base = run('git',
+                       'merge-base',
+                       'HEAD',
+                       base_branch_name)
 
-      changed_files = `git diff --name-only HEAD #{merge_base}`.split "\n"
+      changed_files = run('git',
+                          'diff',
+                          '--name-only',
+                          'HEAD',
+                          merge_base).split "\n"
       return unless $CHILD_STATUS == 0
 
       add_group "Changed from #{base_branch_name}" do |tested_file|
@@ -41,5 +57,7 @@ module SimpleCov::Buildkite::Profiles
         end
       end
     end
+  rescue RuntimeError => error
+    STDERR.puts error
   end
 end
