@@ -65,7 +65,7 @@ module SimpleCov::Buildkite
       integer.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
     end
 
-    def format_as_metric(name, element, changeset:)
+    def format_as_metric(name, element, changeset: nil)
       <<~METRIC_FORMAT
         <div class="mx2">
           <dt title="#{changeset}">#{name}</dt>
