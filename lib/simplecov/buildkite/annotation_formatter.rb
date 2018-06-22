@@ -14,7 +14,7 @@ module SimpleCov::Buildkite
 
           matches = name.match GIT_ANNOTATION_FORMAT_REGEX
 
-          title = "#{matches[:action] == 'added' ? 'New Files' : 'Files Changed'} in #{changeset.include?('...') ? 'branch' : 'commit'}"
+          title = "#{matches[:action] == 'added' ? 'New Files' : 'Files Changed'} in #{matches[:changeset].include?('...') ? 'branch' : 'commit'}"
 
           format_as_metric(title, group, changeset: matches[:changeset])
         end}
