@@ -9,10 +9,12 @@ module SimpleCov::Buildkite
       message = <<~MESSAGE
         <h4>Coverage</h4>
         <dl class="flex mxn2">
-        #{git_results.reverse.map do |name, group|
+        #{git_results.to_a.reverse.map do |git_result|
+          name, group = git_result
+
           matches = name.match GIT_ANNOTATION_FORMAT_REGEX
 
-          title = "#{matches[:action] == "added" ? 'New Files' : 'Files Changed'} in #{changeset.include?('...') ? 'branch' : 'commit'}"
+          title = "#{matches[:action] == 'added' ? 'New Files' : 'Files Changed'} in #{changeset.include?('...') ? 'branch' : 'commit'}"
 
           format_as_metric(title, group, changeset: matches[:changeset])
         end}
