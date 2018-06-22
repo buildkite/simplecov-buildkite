@@ -1,23 +1,31 @@
 module SimpleCov::Buildkite
   class AnnotationFormatter
+    GIT_ANNOTATION_FORMAT_REGEX = /^Files (?<action>changed|added) in (?<changeset>[a-zA-Z0-9.]+)$/
+
     def format(result)
-      git_results, general_results = filter_git_groups(result.groups)
+      git_results, general_results = filter_git_groups(ignore_empty_groups(result.groups))
                                      .values_at(:git, :general)
 
       message = <<~MESSAGE
+        <h4>Coverage</h4>
+        <dl class="flex mxn2">
+        #{git_results.reverse.map do |name, group|
+          matches = name.match GIT_ANNOTATION_FORMAT_REGEX
+
+          title = "#{matches[:action] == "added" ? 'New Files' : 'Files Changed'} in #{changeset.include?('...') ? 'branch' : 'commit'}"
+
+          format_as_metric(title, group, changeset: matches[:changeset])
+        end}
+        #{format_as_metric('All Files', result)}
+        </dl>
         <details>
-          <summary>#{format_element(result)}</summary>
+          <summary>Coverage Breakdown</summary>
           <ul>
-          #{ignore_empty_groups(general_results).map do |name, group|
+          #{general_results.map do |name, group|
             "<li><strong>#{name}</strong>: #{format_element(group)}</li>"
           end.join("\n")}
           </ul>
         </details>
-        <ul>
-        #{git_results.map do |name, group|
-          "<li><strong>#{name}</strong>: #{format_element(group)}</li>"
-        end.join("\n")}
-        </ul>
       MESSAGE
 
       if ENV['BUILDKITE']
@@ -43,7 +51,7 @@ module SimpleCov::Buildkite
       groups.each_with_object(git: {}, general: {}) do |unzipped_group, cats|
         name, group = unzipped_group
 
-        if name.match?(/^Files (?:added|changed) in [a-zA-Z0-9]+/)
+        if name.match? GIT_ANNOTATION_FORMAT_REGEX
           cats[:git][name] = group
         else
           cats[:general][name] = group
@@ -51,12 +59,24 @@ module SimpleCov::Buildkite
       end
     end
 
-    def format_element(element)
-      "#{element.covered_percent.round(2)}% coverage: #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
-    end
-
     def format_integer(integer)
       integer.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    end
+
+    def format_as_metric(name, element, changeset:)
+      <<~METRIC_FORMAT
+        <div class="mx2">
+          <dt title="#{changeset}">#{name}</dt>
+          <dd>
+            <big><big>#{element.covered_percent.floor}</big></big>%<br/>
+            #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines<br/>
+          </dd>
+        </div>
+      METRIC_FORMAT
+    end
+
+    def format_element(element)
+      "#{element.covered_percent.round(2)}% coverage: #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
     end
   end
 end
