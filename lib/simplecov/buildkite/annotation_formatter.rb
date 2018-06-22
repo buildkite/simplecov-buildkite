@@ -17,7 +17,7 @@ module SimpleCov::Buildkite
           title = "#{matches[:action] == 'added' ? 'New Files' : 'Files Changed'} in #{matches[:changeset].include?('...') ? 'branch' : 'commit'}"
 
           format_as_metric(title, group, changeset: matches[:changeset])
-        end}
+        end.join("\n")}
         #{format_as_metric('All Files', result)}
         </dl>
         <details>
