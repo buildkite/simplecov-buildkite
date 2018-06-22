@@ -13,12 +13,12 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     it 'outputs a nicely formatter annotation' do
       expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
         <h4>Coverage</h4>
-        <dl class="flex mxn2">
+        <dl class="m1 mxn2 flex flex-wrap">
 
-        <div class="mx2">
+        <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <big><big>100</big></big>%<br/>
+            <big><big>100.0</big></big>%<br/>
             0.0 of 0.0 lines<br/>
           </dd>
         </div>
@@ -40,12 +40,12 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     it 'creates a nicely formatted annotation' do
       expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
         <h4>Coverage</h4>
-        <dl class="flex mxn2">
+        <dl class="m1 mxn2 flex flex-wrap">
 
-        <div class="mx2">
+        <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <big><big>100</big></big>%<br/>
+            <big><big>100.0</big></big>%<br/>
             0.0 of 0.0 lines<br/>
           </dd>
         </div>
