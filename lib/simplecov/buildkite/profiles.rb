@@ -7,9 +7,36 @@ module SimpleCov::Buildkite::Profiles
     end.chomp
   end
 
+  def self.git(*args)
+    run 'git',
+        *args
+  end
+
+  def self.git_diff_names(*args, diff_filter: '')
+    git('diff',
+        '--name-only',
+        "--diff-filter=#{diff_filter}",
+        *args).split "\n"
+  end
+
+  def self.git_short_commit(commit)
+    git 'rev-parse',
+        '--short',
+        commit
+  end
+
+  def self.git_merge_base(*refs)
+    git 'merge-base',
+        *refs
+  end
+
   SimpleCov.profiles.define 'buildkite' do
     STDERR.puts 'SimpleCov::Buildkite profile initialising...'
-    fail("Not running on Buildkite") unless ENV['BUILDKITE'] == 'true'
+    fail('Not running on Buildkite') unless ENV['BUILDKITE'] == 'true'
+
+    branch_name = ENV['BUILDKITE_BRANCH']
+
+    STDERR.puts "branch_name=#{branch_name}"
 
     base_branch_name = (
       ENV['BUILDKITE_PULL_REQUEST_BASE_BRANCH'] ||
@@ -22,21 +49,15 @@ module SimpleCov::Buildkite::Profiles
 
     STDERR.puts "current_commit=#{current_commit}"
 
-    current_commit_short = run('git',
-                               'rev-parse',
-                               '--short',
-                               current_commit)
+    current_commit_short = git_short_commit(current_commit)
 
     STDERR.puts "current_commit_short=#{current_commit_short}"
 
-    changed_files_in_commit = run('git',
-                                  'diff',
-                                  '--name-only',
-                                  '--diff-filter=d',
-                                  current_commit,
-                                  "#{current_commit}^").split "\n"
+    changed_files_in_commit = git_diff_names(current_commit,
+                                             "#{current_commit}^",
+                                             diff_filter: 'd') # show all change types except deletion
 
-    STDERR.puts "changed_files_in_commit=#{changed_files_in_commit}"
+    STDERR.puts "changed_files_in_commit.count=#{changed_files_in_commit.count}"
 
     add_group "Files changed in #{current_commit_short}" do |tested_file|
       changed_files_in_commit.detect do |changed_file|
@@ -44,32 +65,49 @@ module SimpleCov::Buildkite::Profiles
       end
     end
 
-    if base_branch_name
-      merge_base = run('git',
-                       'merge-base',
-                       current_commit,
-                       base_branch_name)
+    added_files_in_commit = git_diff_names(current_commit,
+                                           "#{current_commit}^",
+                                           diff_filter: 'A') # only show newly added files
 
-      merge_base_short = run('git',
-                             'rev-parse',
-                             '--short',
-                             merge_base)
+    STDERR.puts "added_files_in_commit.count=#{added_files_in_commit.count}"
+
+    add_group "Files added in #{current_commit_short}" do |tested_file|
+      added_files_in_commit.detect do |added_file|
+        tested_file.filename.ends_with?(added_file)
+      end
+    end
+
+    # Compare with the base branch if it's not this branch
+    if base_branch_name && base_branch_name != branch_name
+      merge_base = git_merge_base(current_commit,
+                                  base_branch_name)
+
+      merge_base_short = git_short_commit(merge_base)
 
       STDERR.puts "merge_base=#{merge_base}"
       STDERR.puts "merge_base_short=#{merge_base_short}"
 
-      changed_files_in_branch = run('git',
-                                    'diff',
-                                    '--name-only',
-                                    '--diff-filter=d',
-                                    current_commit,
-                                    merge_base).split "\n"
+      changed_files_in_branch = git_diff_names(current_commit,
+                                               merge_base,
+                                               diff_filter: 'd') # show all change types except deletion
 
       STDERR.puts "changed_files_in_branch.count=#{changed_files_in_branch.count}"
 
       add_group "Files changed in #{merge_base_short}...#{current_commit_short}" do |tested_file|
         changed_files_in_branch.detect do |changed_file|
           tested_file.filename.ends_with?(changed_file)
+        end
+      end
+
+      added_files_in_branch = git_diff_names(current_commit,
+                                             merge_base,
+                                             diff_filter: 'A') # only show newly added files
+
+      STDERR.puts "added_files_in_branch.count=#{added_files_in_branch.count}"
+
+      add_group "Files added in #{merge_base_short}...#{current_commit_short}" do |tested_file|
+        added_files_in_branch.detect do |added_file|
+          tested_file.filename.ends_with?(added_file)
         end
       end
     end
