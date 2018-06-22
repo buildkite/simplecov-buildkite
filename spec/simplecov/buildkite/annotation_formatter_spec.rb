@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
   let(:result) { SimpleCov::Result.from_hash("RSpec" => {"coverage" => {"a.rb" => [1, 0], "b.rb" => [0, 1]}, "timestamp" => 1527643747}) }
@@ -7,40 +7,56 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
 
   before { allow(SimpleCov).to receive(:groups).and_return("a" => "a", "b" => "b") }
 
-  context "outside of buildkite" do
-    around { |example| stubbing_env("BUILDKITE", nil) { example.call } }
+  context 'outside of buildkite' do
+    around { |example| stubbing_env('BUILDKITE', nil) { example.call } }
 
-    it "outputs a nicely formatter annotation" do
+    it 'outputs a nicely formatter annotation' do
       expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
+        <h4>Coverage</h4>
+        <dl class="flex mxn2">
+
+        <div class="mx2">
+          <dt title="">All Files</dt>
+          <dd>
+            <big><big>100</big></big>%<br/>
+            0.0 of 0.0 lines<br/>
+          </dd>
+        </div>
+        
+        </dl>
         <details>
-          <summary>100.0% coverage: 0.0 of 0.0 lines</summary>
+          <summary>Coverage Breakdown</summary>
           <ul>
-            <li><strong>a</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
-        <li><strong>b</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+          
           </ul>
         </details>
-        <ul>
-          
-        </ul>
       MESSAGE
     end
   end
 
-  context "inside buildkite" do
-    around { |example| stubbing_env("BUILDKITE", "true") { example.call } }
+  context 'inside buildkite' do
+    around { |example| stubbing_env('BUILDKITE', 'true') { example.call } }
 
-    it "creates a nicely formatted annotation" do
-      expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", <<~MESSAGE)
+    it 'creates a nicely formatted annotation' do
+      expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
+        <h4>Coverage</h4>
+        <dl class="flex mxn2">
+
+        <div class="mx2">
+          <dt title="">All Files</dt>
+          <dd>
+            <big><big>100</big></big>%<br/>
+            0.0 of 0.0 lines<br/>
+          </dd>
+        </div>
+        
+        </dl>
         <details>
-          <summary>100.0% coverage: 0.0 of 0.0 lines</summary>
+          <summary>Coverage Breakdown</summary>
           <ul>
-            <li><strong>a</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
-        <li><strong>b</strong>: 100.0% coverage: 0.0 of 0.0 lines</li>
+          
           </ul>
         </details>
-        <ul>
-          
-        </ul>
       MESSAGE
 
       formatter.format(result)
