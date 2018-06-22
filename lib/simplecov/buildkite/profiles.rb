@@ -54,8 +54,7 @@ module SimpleCov::Buildkite::Profiles
     STDERR.puts "current_commit_short=#{current_commit_short}"
 
     changed_files_in_commit = git_diff_names(current_commit,
-                                             "#{current_commit}^",
-                                             diff_filter: 'd') # show all change types except deletion
+                                             diff_filter: 'd')
 
     STDERR.puts "changed_files_in_commit.count=#{changed_files_in_commit.count}"
 
@@ -66,8 +65,7 @@ module SimpleCov::Buildkite::Profiles
     end
 
     added_files_in_commit = git_diff_names(current_commit,
-                                           "#{current_commit}^",
-                                           diff_filter: 'A') # only show newly added files
+                                           diff_filter: 'A')
 
     STDERR.puts "added_files_in_commit.count=#{added_files_in_commit.count}"
 
@@ -87,9 +85,9 @@ module SimpleCov::Buildkite::Profiles
       STDERR.puts "merge_base=#{merge_base}"
       STDERR.puts "merge_base_short=#{merge_base_short}"
 
-      changed_files_in_branch = git_diff_names(current_commit,
-                                               merge_base,
-                                               diff_filter: 'd') # show all change types except deletion
+      changed_files_in_branch = git_diff_names(merge_base,
+                                               current_commit,
+                                               diff_filter: 'd')
 
       STDERR.puts "changed_files_in_branch.count=#{changed_files_in_branch.count}"
 
@@ -99,9 +97,9 @@ module SimpleCov::Buildkite::Profiles
         end
       end
 
-      added_files_in_branch = git_diff_names(current_commit,
-                                             merge_base,
-                                             diff_filter: 'A') # only show newly added files
+      added_files_in_branch = git_diff_names(merge_base,
+                                             current_commit,
+                                             diff_filter: 'A')
 
       STDERR.puts "added_files_in_branch.count=#{added_files_in_branch.count}"
 
