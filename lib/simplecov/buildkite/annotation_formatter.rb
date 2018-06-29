@@ -7,7 +7,8 @@ module SimpleCov::Buildkite
                                      .values_at(:git, :general)
 
       message = <<~MESSAGE
-        <h4>Coverage</h4>
+        #### Coverage
+
         <dl class="flex flex-wrap m1 mxn2">
       MESSAGE
 
@@ -41,13 +42,12 @@ module SimpleCov::Buildkite
 
       if general_results.any?
         message += <<~MESSAGE
-          <details>
-            <summary>Coverage Breakdown</summary>
-            <ul>
+          <details><summary>Coverage Breakdown</summary>
+
             #{general_results.map do |name, group|
-              "<li><strong>#{name}</strong>: #{format_group(group)}</li>"
+              "- **#{name}**: #{format_group(group)}"
             end.join("\n")}
-            </ul>
+
           </details>
         MESSAGE
       end
@@ -92,15 +92,20 @@ module SimpleCov::Buildkite
     end
 
     def format_as_metric(name, element, changeset: nil)
-      <<~METRIC_FORMAT
-        <div class="m2">
-          <dt#{changeset.nil? ? '' : " title=\"#{changeset}\""}>#{name}</dt>
-          <dd>
-            <span class="bold"><span class="h2 regular">#{format_float(element.covered_percent)}</span>%</span><br/>
-            #{format_line_count(element)}
-          </dd>
-        </div>
-      METRIC_FORMAT
+      metric = <<~METRIC_HEADER
+        <div class="m2"><dt#{changeset.nil? ? '' : " title=\"#{changeset}\""}>#{name}</dt><dd>
+      METRIC_HEADER
+
+      metric += <<~METRIC_VALUE
+
+        **<span class="h2 regular">#{format_float(element.covered_percent)}</span>%**  
+        #{format_line_count(element)}
+
+      METRIC_VALUE
+
+      metric += <<~METRIC_FOOTER
+        </dd></div>
+      METRIC_FOOTER
     end
 
     def format_group(element)
