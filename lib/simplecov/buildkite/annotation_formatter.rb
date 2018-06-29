@@ -94,10 +94,10 @@ module SimpleCov::Buildkite
     def format_as_metric(name, element, changeset: nil)
       <<~METRIC_FORMAT
         <div class="m2">
-          <dt title="#{changeset}">#{name}</dt>
+          <dt#{changeset.nil? ? '' : " title=\"#{changeset}\""}>#{name}</dt>
           <dd>
             <span class="bold"><span class="h2 regular">#{format_float(element.covered_percent)}</span>%</span><br/>
-            #{format_line_count(element)}<br/>
+            #{format_line_count(element)}
           </dd>
         </div>
       METRIC_FORMAT
