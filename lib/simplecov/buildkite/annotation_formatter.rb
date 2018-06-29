@@ -9,26 +9,48 @@ module SimpleCov::Buildkite
       message = <<~MESSAGE
         <h4>Coverage</h4>
         <dl class="flex flex-wrap m1 mxn2">
-        #{git_results.to_a.reverse.map do |git_result|
-          name, group = git_result
-
-          matches = name.match GIT_ANNOTATION_FORMAT_REGEX
-
-          title = "#{matches[:action] == 'added' ? 'New Files' : 'Files Changed'} in #{matches[:changeset].include?('...') ? 'branch' : 'commit'}"
-
-          format_as_metric(title, group, changeset: matches[:changeset])
-        end.join("\n")}
-        #{format_as_metric('All Files', result)}
-        </dl>
-        <details>
-          <summary>Coverage Breakdown</summary>
-          <ul>
-          #{general_results.map do |name, group|
-            "<li><strong>#{name}</strong>: #{format_element(group)}</li>"
-          end.join("\n")}
-          </ul>
-        </details>
       MESSAGE
+
+      git_results.to_a.reverse.each do |git_result|
+        name, group = git_result
+
+        matches = name.match GIT_ANNOTATION_FORMAT_REGEX
+
+        type = if matches[:action] == 'added'
+                 'New Files'
+               else
+                 'Files Changed'
+               end
+
+        changeset = if matches[:changeset].include?('...')
+                      'branch'
+                    else
+                      'commit'
+                    end
+
+        message += format_as_metric "#{type} in #{changeset}",
+                                    group,
+                                    changeset: matches[:changeset]
+      end
+
+      message += format_as_metric 'All Files', result
+
+      message += <<~MESSAGE
+        </dl>
+      MESSAGE
+
+      if general_results.any?
+        message += <<~MESSAGE
+          <details>
+            <summary>Coverage Breakdown</summary>
+            <ul>
+            #{general_results.map do |name, group|
+              "<li><strong>#{name}</strong>: #{format_group(group)}</li>"
+            end.join("\n")}
+            </ul>
+          </details>
+        MESSAGE
+      end
 
       if ENV['BUILDKITE']
         system 'buildkite-agent',
@@ -75,14 +97,18 @@ module SimpleCov::Buildkite
           <dt title="#{changeset}">#{name}</dt>
           <dd>
             <span class="bold"><span class="h2 regular">#{format_float(element.covered_percent)}</span>%</span><br/>
-            #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines<br/>
+            #{format_line_count(element)}<br/>
           </dd>
         </div>
       METRIC_FORMAT
     end
 
-    def format_element(element)
-      "#{format_float(element.covered_percent)}% coverage: #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
+    def format_group(element)
+      "#{format_float(element.covered_percent)}% coverage: #{format_line_count(element)}"
+    end
+
+    def format_line_count(element)
+      "#{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
     end
   end
 end
