@@ -10,15 +10,15 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
   context 'outside of buildkite' do
     around { |example| stubbing_env('BUILDKITE', nil) { example.call } }
 
-    it 'outputs a nicely formatter annotation' do
+    it 'emits a nicely formatted annotation to STDOUT' do
       expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
         <h4>Coverage</h4>
-        <dl class="m1 mxn2 flex flex-wrap">
+        <dl class="flex flex-wrap m1 mxn2">
 
         <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <big><big>100.0</big></big>%<br/>
+            <span class="bold"><span class="h2 regular">100.0</span>%</span><br/>
             0.0 of 0.0 lines<br/>
           </dd>
         </div>
@@ -34,18 +34,18 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     end
   end
 
-  context 'inside buildkite' do
+  context 'inside Buildkite' do
     around { |example| stubbing_env('BUILDKITE', 'true') { example.call } }
 
-    it 'creates a nicely formatted annotation' do
+    it 'submits a nicely formatted annotation to the Agent' do
       expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
         <h4>Coverage</h4>
-        <dl class="m1 mxn2 flex flex-wrap">
+        <dl class="flex flex-wrap m1 mxn2">
 
         <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <big><big>100.0</big></big>%<br/>
+            <span class="bold"><span class="h2 regular">100.0</span>%</span><br/>
             0.0 of 0.0 lines<br/>
           </dd>
         </div>

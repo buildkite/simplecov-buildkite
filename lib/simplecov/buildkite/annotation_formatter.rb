@@ -8,7 +8,7 @@ module SimpleCov::Buildkite
 
       message = <<~MESSAGE
         <h4>Coverage</h4>
-        <dl class="m1 mxn2 flex flex-wrap">
+        <dl class="flex flex-wrap m1 mxn2">
         #{git_results.to_a.reverse.map do |git_result|
           name, group = git_result
 
@@ -70,7 +70,7 @@ module SimpleCov::Buildkite
         <div class="m2">
           <dt title="#{changeset}">#{name}</dt>
           <dd>
-            <big><big>#{element.covered_percent.round(2)}</big></big>%<br/>
+            <span class="bold"><span class="h2 regular">#{element.covered_percent.round(2)}</span>%</span><br/>
             #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines<br/>
           </dd>
         </div>
