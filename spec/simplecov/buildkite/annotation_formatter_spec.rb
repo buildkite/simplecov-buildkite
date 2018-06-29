@@ -18,8 +18,8 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <span class="bold"><span class="h2 regular">100.0</span>%</span><br/>
-            0.0 of 0.0 lines<br/>
+            <span class="bold"><span class="h2 regular">100</span>%</span><br/>
+            0 of 0 lines<br/>
           </dd>
         </div>
         
@@ -45,8 +45,8 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         <div class="m2">
           <dt title="">All Files</dt>
           <dd>
-            <span class="bold"><span class="h2 regular">100.0</span>%</span><br/>
-            0.0 of 0.0 lines<br/>
+            <span class="bold"><span class="h2 regular">100</span>%</span><br/>
+            0 of 0 lines<br/>
           </dd>
         </div>
         

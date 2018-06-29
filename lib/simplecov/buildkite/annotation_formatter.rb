@@ -62,7 +62,11 @@ module SimpleCov::Buildkite
     end
 
     def format_integer(integer)
-      integer.to_s.gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+      Kernel.format('%<integer>d', integer: integer).gsub(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1,")
+    end
+
+    def format_float(float)
+      Kernel.format('%<floored_float>g', floored_float: float.floor(2))
     end
 
     def format_as_metric(name, element, changeset: nil)
@@ -70,7 +74,7 @@ module SimpleCov::Buildkite
         <div class="m2">
           <dt title="#{changeset}">#{name}</dt>
           <dd>
-            <span class="bold"><span class="h2 regular">#{element.covered_percent.round(2)}</span>%</span><br/>
+            <span class="bold"><span class="h2 regular">#{format_float(element.covered_percent)}</span>%</span><br/>
             #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines<br/>
           </dd>
         </div>
@@ -78,7 +82,7 @@ module SimpleCov::Buildkite
     end
 
     def format_element(element)
-      "#{element.covered_percent.round(2)}% coverage: #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
+      "#{format_float(element.covered_percent)}% coverage: #{format_integer(element.covered_lines)} of #{format_integer(element.covered_lines + element.missed_lines)} lines"
     end
   end
 end
