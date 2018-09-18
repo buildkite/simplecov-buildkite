@@ -14,6 +14,8 @@ module SimpleCov::Buildkite
 
       if ENV["BUILDKITE"]
         system "buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", message
+      elsif ENV["SIMPLECOV_BUILDKITE_TOFILE"]
+        IO.write("coverage/buildkite-annotations.html", message)
       else
         puts message
       end
