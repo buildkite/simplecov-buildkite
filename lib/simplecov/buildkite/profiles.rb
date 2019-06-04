@@ -38,10 +38,10 @@ module SimpleCov::Buildkite::Profiles
 
     STDERR.puts "branch_name=#{branch_name}"
 
-    base_branch_name = (
-      ENV['BUILDKITE_PULL_REQUEST_BASE_BRANCH'] ||
-      ENV['BUILDKITE_PIPELINE_DEFAULT_BRANCH']
-    )
+    base_branch_name = ENV['BUILDKITE_PULL_REQUEST_BASE_BRANCH']
+    if base_branch_name.nil? || base_branch_name.empty?
+      base_branch_name = ENV['BUILDKITE_PIPELINE_DEFAULT_BRANCH']
+    end
 
     STDERR.puts "base_branch_name=#{base_branch_name}"
 
