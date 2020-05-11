@@ -60,7 +60,7 @@ module SimpleCov::Buildkite::Profiles
 
     add_group "Files changed in #{current_commit_short}" do |tested_file|
       changed_files_in_commit.detect do |changed_file|
-        tested_file.filename.ends_with?(changed_file)
+        tested_file.filename.end_with?(changed_file)
       end
     end
 
@@ -71,7 +71,7 @@ module SimpleCov::Buildkite::Profiles
 
     add_group "Files added in #{current_commit_short}" do |tested_file|
       added_files_in_commit.detect do |added_file|
-        tested_file.filename.ends_with?(added_file)
+        tested_file.filename.end_with?(added_file)
       end
     end
 
@@ -93,7 +93,7 @@ module SimpleCov::Buildkite::Profiles
 
       add_group "Files changed in #{merge_base_short}...#{current_commit_short}" do |tested_file|
         changed_files_in_branch.detect do |changed_file|
-          tested_file.filename.ends_with?(changed_file)
+          tested_file.filename.end_with?(changed_file)
         end
       end
 
@@ -105,7 +105,7 @@ module SimpleCov::Buildkite::Profiles
 
       add_group "Files added in #{merge_base_short}...#{current_commit_short}" do |tested_file|
         added_files_in_branch.detect do |added_file|
-          tested_file.filename.ends_with?(added_file)
+          tested_file.filename.end_with?(added_file)
         end
       end
     end
