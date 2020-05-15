@@ -34,6 +34,8 @@ require "simplecov"
 require "simplecov-buildkite"
 
 SimpleCov.start "rails" do
+  load_profile "buildkite"
+
   formatter SimpleCov::Formatter::MultiFormatter.new([
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Buildkite::AnnotationFormatter,
@@ -41,9 +43,9 @@ SimpleCov.start "rails" do
 end
 ```
 
-When run on Buildkite, this will also output a pretty Buildkite annotation:
+When run on Buildkite with the `"buildkite"` profile enabled, this will also output a pretty Buildkite annotation, with coverage change breakdowns for the current PR or branch and commit:
 
-<img width="473" alt="Buildkite build showing a SimpleCov report in a Buildkite annotation" src="https://user-images.githubusercontent.com/282113/40627591-b8de5bc4-6274-11e8-8483-245e35c873af.png">
+<img width="577" alt="Buildkite build showing a SimpleCov report in a Buildkite annotation" src="https://user-images.githubusercontent.com/282113/42116587-c2e9731e-7bac-11e8-9d2f-50fa7f071f09.png">
 
   [Rails]: https://rubyonrails.org
   [RSpec]: http://rspec.info
