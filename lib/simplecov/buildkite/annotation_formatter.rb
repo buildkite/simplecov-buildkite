@@ -18,9 +18,9 @@ module SimpleCov::Buildkite
         matches = name.match GIT_ANNOTATION_FORMAT_REGEX
 
         type = if matches[:action] == 'added'
-                 'New Files'
+                 'New files'
                else
-                 'Files Changed'
+                 'Files changed'
                end
 
         changeset = if matches[:changeset].include?('...')
@@ -34,7 +34,7 @@ module SimpleCov::Buildkite
                                     changeset: matches[:changeset]
       end
 
-      message += format_as_metric 'All Files', result
+      message += format_as_metric 'All files', result
 
       message += <<~MESSAGE
         </dl>
@@ -42,7 +42,7 @@ module SimpleCov::Buildkite
 
       if general_results.any?
         message += <<~MESSAGE
-          <details><summary>Coverage Breakdown</summary>
+          <details><summary>Coverage breakdown</summary>
 
             #{general_results.map do |name, group|
               "- **#{name}**: #{format_group(group)}"

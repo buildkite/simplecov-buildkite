@@ -15,7 +15,7 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         #### Coverage
 
         <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All Files</dt><dd>
+        <div class="m2"><dt>All files</dt><dd>
 
         **<span class="h2 regular">100</span>%**  
         0 of 0 lines
@@ -34,7 +34,7 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         #### Coverage
 
         <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All Files</dt><dd>
+        <div class="m2"><dt>All files</dt><dd>
 
         **<span class="h2 regular">100</span>%**  
         0 of 0 lines
