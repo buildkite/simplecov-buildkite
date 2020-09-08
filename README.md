@@ -1,5 +1,7 @@
 # SimpleCov::Buildkite
 
+[![Gem Version](https://badge.fury.io/rb/simplecov-buildkite.svg)](https://rubygems.org/gems/simplecov-buildkite) [![Build Status](https://travis-ci.org/ticky/simplecov-buildkite.svg?branch=develop)](https://travis-ci.org/ticky/simplecov-buildkite)
+
 Generate [Buildkite annotations] from your [SimpleCov] coverage reports when running your build on [Buildkite].
 
   [Buildkite]: https://buildkite.com

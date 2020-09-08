@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    simplecov-buildkite (0.1.1)
+    simplecov-buildkite (0.2.0)
       simplecov (~> 0.16)
 
 GEM
