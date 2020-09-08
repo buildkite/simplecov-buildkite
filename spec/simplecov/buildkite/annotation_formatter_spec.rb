@@ -1,7 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
-  let(:result) { SimpleCov::Result.from_hash("RSpec" => {"coverage" => {"a.rb" => [1, 0], "b.rb" => [0, 1]}, "timestamp" => 1527643747}) }
+  let(:result) do
+    # As of SimpleCov 0.19.0, `SimpleCov::Result.from_hash` now returns an array:
+    # https://github.com/simplecov-ruby/simplecov/commit/9ed35debcd6e5b4a22e99a655c9b40be0d7da142
+    # This is an API intended for internal use, though, and plugins are passed
+    # merged result objects, so we work around this API difference here.
+    SimpleCov::Result.from_hash({"RSpec" => {"coverage" => {"a.rb" => [1, 0], "b.rb" => [0, 1]}, "timestamp" => 1527643747}}).first
+  end
 
   subject(:formatter) { SimpleCov::Buildkite::AnnotationFormatter.new }
 
