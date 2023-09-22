@@ -37,6 +37,11 @@ require "simplecov-buildkite"
 
 SimpleCov.start "rails" do
   load_profile "buildkite"
+  # Optionally specify your app/service name
+  # Useful in modular projects and results separate report in buildkite
+  # for each project's part with installed gem simplecov-buildkite
+  
+  SimpleCov::Buildkite.config.app_name = 'YourAppName'
 
   formatter SimpleCov::Formatter::MultiFormatter.new([
     SimpleCov::Formatter::HTMLFormatter,
