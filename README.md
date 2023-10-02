@@ -1,6 +1,6 @@
 # SimpleCov::Buildkite
 
-[![Gem Version](https://badge.fury.io/rb/simplecov-buildkite.svg)](https://rubygems.org/gems/simplecov-buildkite) [![Build Status](https://travis-ci.org/ticky/simplecov-buildkite.svg?branch=develop)](https://travis-ci.org/ticky/simplecov-buildkite)
+[![Gem Version](https://badge.fury.io/rb/simplecov-buildkite.svg)](https://rubygems.org/gems/simplecov-buildkite) [![Build Status](https://travis-ci.org/buildkite/simplecov-buildkite.svg?branch=develop)](https://travis-ci.org/buildkite/simplecov-buildkite)
 
 Generate [Buildkite annotations] from your [SimpleCov] coverage reports when running your build on [Buildkite].
 
@@ -60,7 +60,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ticky/simplecov-buildkite. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant] code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/buildkite/simplecov-buildkite. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant] code of conduct.
 
   [Contributor Covenant]: http://contributor-covenant.org
 
@@ -70,4 +70,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the SimpleCov::Buildkite project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/ticky/simplecov-buildkite/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the SimpleCov::Buildkite project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/buildkite/simplecov-buildkite/blob/master/CODE_OF_CONDUCT.md).
