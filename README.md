@@ -37,11 +37,6 @@ require "simplecov-buildkite"
 
 SimpleCov.start "rails" do
   load_profile "buildkite"
-  # Optionally specify your app/service name
-  # Useful in modular projects and results separate report in buildkite
-  # for each project's part with installed gem simplecov-buildkite
-  
-  SimpleCov::Buildkite.config.app_name = 'YourAppName'
 
   formatter SimpleCov::Formatter::MultiFormatter.new([
     SimpleCov::Formatter::HTMLFormatter,
@@ -53,6 +48,19 @@ end
 When run on Buildkite with the `"buildkite"` profile enabled, this will also output a pretty Buildkite annotation, with coverage change breakdowns for the current PR or branch and commit:
 
 <img width="577" alt="Buildkite build showing a SimpleCov report in a Buildkite annotation" src="https://user-images.githubusercontent.com/282113/42116587-c2e9731e-7bac-11e8-9d2f-50fa7f071f09.png">
+
+You can customize the title and annotation context, in case you have multiple coverage reports:
+
+```yaml
+steps:
+- command: bin/rails engine1:spec
+  env:
+    SIMPLECOV_BUILDKITE_CONTEXT: "Engine 1 Coverage"
+
+- command: bin/rails engine2:spec
+  env:
+    SIMPLECOV_BUILDKITE_CONTEXT: "Engine 2 Coverage"
+```
 
   [Rails]: https://rubyonrails.org
   [RSpec]: http://rspec.info

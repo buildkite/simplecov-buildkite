@@ -6,10 +6,8 @@ module SimpleCov::Buildkite
       git_results, general_results = filter_git_groups(ignore_empty_groups(result.groups))
                                      .values_at(:git, :general)
 
-      app_name = SimpleCov::Buildkite.config.app_name
-
       message = <<~MESSAGE
-        #### #{app_name ? "Coverage for #{app_name}" : 'Coverage'}
+        #### #{ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "Coverage")}
 
         <dl class="flex flex-wrap m1 mxn2">
       MESSAGE
@@ -57,7 +55,7 @@ module SimpleCov::Buildkite
       if ENV['BUILDKITE']
         system 'buildkite-agent',
                'annotate',
-               '--context', app_name || 'simplecov',
+               '--context', ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov").gsub(/\s/,'').downcase,
                '--style', 'info',
                message
       else
