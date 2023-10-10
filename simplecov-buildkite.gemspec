@@ -1,16 +1,16 @@
 Gem::Specification.new do |spec|
-  spec.name          = "simplecov-buildkite"
-  spec.version       = File.read("#{__dir__}/lib/simplecov/buildkite/version.rb")[/VERSION = "(.*)"/, 1]
-  spec.authors       = ["Jessica Stokes", "Samuel Cochran"]
-  spec.email         = ["hello@jessicastokes.net", "sj26@sj26.com"]
+  spec.name = "simplecov-buildkite"
+  spec.version = File.read("#{__dir__}/lib/simplecov/buildkite/version.rb")[/VERSION = "(.*)"/, 1]
+  spec.authors = ["Jessica Stokes", "Samuel Cochran"]
+  spec.email = ["hello@jessicastokes.net", "sj26@sj26.com"]
 
-  spec.summary       = %q{Generate SimpleCov reports for your parallel Buildkite builds}
-  spec.homepage      = "https://github.com/ticky/simplecov-buildkite"
-  spec.license       = "MIT"
+  spec.summary = %q{Generate SimpleCov reports for your parallel Buildkite builds}
+  spec.homepage = "https://github.com/ticky/simplecov-buildkite"
+  spec.license = "MIT"
 
-  spec.files         = Dir["*.md", "LICENSE", "lib/**/*"]
+  spec.files = Dir["*.md", "LICENSE", "lib/**/*"]
 
-  spec.metadata      = {
+  spec.metadata = {
     "changelog_uri" => "#{spec.homepage}/blob/master/CHANGELOG.md",
   }
 
