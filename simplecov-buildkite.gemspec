@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/ticky/simplecov-buildkite"
   spec.license = "MIT"
 
-  spec.files = Dir["*.md", "LICENSE", "lib/**/*"]
+  spec.files = Dir["*.md", "lib/**/*"]
 
   spec.metadata = {
     "changelog_uri" => "#{spec.homepage}/blob/master/CHANGELOG.md",
