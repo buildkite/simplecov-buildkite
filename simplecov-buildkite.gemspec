@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
   spec.name = "simplecov-buildkite"
   spec.version = File.read("#{__dir__}/lib/simplecov/buildkite/version.rb")[/VERSION = "(.*)"/, 1]
-  spec.authors = ["Jessica Stokes", "Samuel Cochran"]
-  spec.email = ["hello@jessicastokes.net", "sj26@sj26.com"]
+  spec.authors = ["Buildkite"]
+  spec.email = ["support@buildkite.com"]
 
   spec.summary = "Generate SimpleCov reports for your parallel Buildkite builds"
   spec.homepage = "https://github.com/ticky/simplecov-buildkite"
