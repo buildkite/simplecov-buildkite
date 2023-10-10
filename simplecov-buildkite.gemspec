@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Jessica Stokes", "Samuel Cochran"]
   spec.email = ["hello@jessicastokes.net", "sj26@sj26.com"]
 
-  spec.summary = %q{Generate SimpleCov reports for your parallel Buildkite builds}
+  spec.summary = "Generate SimpleCov reports for your parallel Buildkite builds"
   spec.homepage = "https://github.com/ticky/simplecov-buildkite"
   spec.license = "MIT"
 
