@@ -98,7 +98,7 @@ module SimpleCov::Buildkite
 
       metric += <<~METRIC_VALUE
 
-        **<span class="h2 regular">#{format_float(element.covered_percent)}</span>%**  
+        **<span class="h2 regular">#{format_float(element.covered_percent)}</span>%**
         #{format_line_count(element)}
 
       METRIC_VALUE
