@@ -55,7 +55,7 @@ module SimpleCov::Buildkite
       if ENV['BUILDKITE']
         system 'buildkite-agent',
                'annotate',
-               '--context', ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov").gsub(/\s/,'').downcase,
+               '--context', annotation_context,
                '--style', 'info',
                message
       else
@@ -67,6 +67,10 @@ module SimpleCov::Buildkite
 
     def annotation_title
       ENV.fetch("SIMPLECOV_BUILDKITE_TITLE", "Coverage")
+    end
+
+    def annotation_context
+      ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov")
     end
 
     def ignore_empty_groups(groups)

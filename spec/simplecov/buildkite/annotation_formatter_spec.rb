@@ -77,5 +77,23 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         expect { formatter.format(result) }.to output(/#### Ruby Coverage/).to_stdout
       end
     end
+
+    describe "SIMPLECOV_BUILDKITE_CONTEXT" do
+      before do
+        ENV["BUILDKITE"] = "true"
+      end
+
+      it "sets the --context flag for the buildkite-agent CLI" do
+        ENV["SIMPLECOV_BUILDKITE_CONTEXT"] = "engine-1-coverage"
+
+        expected_context = "engine-1-coverage"
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", expected_context, any_args)
+
+        formatter.format(result)
+      end
+
+        formatter.format(result)
+      end
+    end
   end
 end
