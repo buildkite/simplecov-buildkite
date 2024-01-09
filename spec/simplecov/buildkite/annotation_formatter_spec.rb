@@ -23,47 +23,49 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
     ENV.replace(@original_env)
   end
 
-  context 'outside of buildkite' do
-    before do
-      ENV.delete("BUILDKITE")
+  describe "output" do
+    context 'outside of buildkite' do
+      before do
+        ENV.delete("BUILDKITE")
+      end
+
+      it 'emits a nicely formatted annotation to STDOUT' do
+        expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
+          #### Coverage
+
+          <dl class="flex flex-wrap m1 mxn2">
+          <div class="m2"><dt>All files</dt><dd>
+
+          **<span class="h2 regular">100</span>%**
+          0 of 0 lines
+
+          </dd></div>
+          </dl>
+        MESSAGE
+      end
     end
 
-    it 'emits a nicely formatted annotation to STDOUT' do
-      expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
-        #### Coverage
+    context 'inside Buildkite' do
+      before do
+        ENV["BUILDKITE"] = "true"
+      end
 
-        <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All files</dt><dd>
+      it 'submits a nicely formatted annotation to the Agent' do
+        expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
+          #### Coverage
 
-        **<span class="h2 regular">100</span>%**
-        0 of 0 lines
+          <dl class="flex flex-wrap m1 mxn2">
+          <div class="m2"><dt>All files</dt><dd>
 
-        </dd></div>
-        </dl>
-      MESSAGE
-    end
-  end
+          **<span class="h2 regular">100</span>%**
+          0 of 0 lines
 
-  context 'inside Buildkite' do
-    before do
-      ENV["BUILDKITE"] = "true"
-    end
+          </dd></div>
+          </dl>
+        MESSAGE
 
-    it 'submits a nicely formatted annotation to the Agent' do
-      expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
-        #### Coverage
-
-        <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All files</dt><dd>
-
-        **<span class="h2 regular">100</span>%**
-        0 of 0 lines
-
-        </dd></div>
-        </dl>
-      MESSAGE
-
-      formatter.format(result)
+        formatter.format(result)
+      end
     end
   end
 end
