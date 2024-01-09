@@ -68,4 +68,14 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
       end
     end
   end
+
+  describe "customizing via env vars" do
+    describe "SIMPLECOV_BUILDKITE_TITLE" do
+      it "sets the title" do
+        ENV["SIMPLECOV_BUILDKITE_TITLE"] = "Ruby Coverage"
+
+        expect { formatter.format(result) }.to output(/#### Ruby Coverage/).to_stdout
+      end
+    end
+  end
 end

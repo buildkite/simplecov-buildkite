@@ -7,7 +7,7 @@ module SimpleCov::Buildkite
                                      .values_at(:git, :general)
 
       message = <<~MESSAGE
-        #### #{ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "Coverage")}
+        #### #{annotation_title}
 
         <dl class="flex flex-wrap m1 mxn2">
       MESSAGE
@@ -64,6 +64,10 @@ module SimpleCov::Buildkite
     end
 
     private
+
+    def annotation_title
+      ENV.fetch("SIMPLECOV_BUILDKITE_TITLE", "Coverage")
+    end
 
     def ignore_empty_groups(groups)
       groups.select do |_name, group|
