@@ -7,7 +7,7 @@ module SimpleCov::Buildkite
                                      .values_at(:git, :general)
 
       message = <<~MESSAGE
-        #### Coverage
+        #### #{ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "Coverage")}
 
         <dl class="flex flex-wrap m1 mxn2">
       MESSAGE
@@ -55,7 +55,7 @@ module SimpleCov::Buildkite
       if ENV['BUILDKITE']
         system 'buildkite-agent',
                'annotate',
-               '--context', 'simplecov',
+               '--context', ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov").gsub(/\s/,'').downcase,
                '--style', 'info',
                message
       else
