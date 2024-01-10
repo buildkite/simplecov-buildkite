@@ -49,17 +49,19 @@ When run on Buildkite with the `"buildkite"` profile enabled, this will also out
 
 <img width="577" alt="Buildkite build showing a SimpleCov report in a Buildkite annotation" src="https://user-images.githubusercontent.com/282113/42116587-c2e9731e-7bac-11e8-9d2f-50fa7f071f09.png">
 
-You can customize the title and annotation context, in case you have multiple coverage reports:
+You can customize the title and annotation context using environment variables in your Pipeline. You can provide multiple coverage reports for a single build by providing distinct values for the annotation context.
 
 ```yaml
 steps:
 - command: bin/rails engine1:spec
   env:
-    SIMPLECOV_BUILDKITE_CONTEXT: "Engine 1 Coverage"
+    SIMPLECOV_BUILDKITE_TITLE: "Engine 1 Coverage"
+    SIMPLECOV_BUILDKITE_CONTEXT: "engine-1-coverage"
 
 - command: bin/rails engine2:spec
   env:
-    SIMPLECOV_BUILDKITE_CONTEXT: "Engine 2 Coverage"
+    SIMPLECOV_BUILDKITE_TITLE: "Engine 2 Coverage"
+    SIMPLECOV_BUILDKITE_CONTEXT: "engine-2-coverage"
 ```
 
   [Rails]: https://rubyonrails.org

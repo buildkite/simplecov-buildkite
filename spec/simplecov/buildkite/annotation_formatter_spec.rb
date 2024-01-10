@@ -11,64 +11,94 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
 
   subject(:formatter) { SimpleCov::Buildkite::AnnotationFormatter.new }
 
-  before { allow(SimpleCov).to receive(:groups).and_return("a" => "a", "b" => "b") }
-
-  context 'outside of buildkite' do
-    around { |example| stubbing_env('BUILDKITE', nil) { example.call } }
-
-    it 'emits a nicely formatted annotation to STDOUT' do
-      expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
-        #### Coverage
-
-        <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All files</dt><dd>
-
-        **<span class="h2 regular">100</span>%**  
-        0 of 0 lines
-
-        </dd></div>
-        </dl>
-      MESSAGE
-    end
+  before do
+    allow(SimpleCov).to receive(:groups).and_return("a" => "a", "b" => "b")
   end
 
-  context 'inside Buildkite' do
-    around { |example| stubbing_env('BUILDKITE', 'true') { example.call } }
-
-    it 'submits a nicely formatted annotation to the Agent' do
-      expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
-        #### Coverage
-
-        <dl class="flex flex-wrap m1 mxn2">
-        <div class="m2"><dt>All files</dt><dd>
-
-        **<span class="h2 regular">100</span>%**  
-        0 of 0 lines
-
-        </dd></div>
-        </dl>
-      MESSAGE
-
-      formatter.format(result)
-    end
+  before do
+    @original_env = ENV.to_h
   end
 
-  def stubbing_env(name, value)
-    begin
-      original = ENV[name]
+  after do
+    ENV.replace(@original_env)
+  end
 
-      if value.nil?
-        ENV.delete(name)
-      else
-        ENV[name] = value
+  describe "output" do
+    context "outside of buildkite" do
+      before do
+        ENV.delete("BUILDKITE")
       end
 
-      yield
-    ensure
-      if original.nil?
-        ENV.delete(name)
-      else
-        ENV[name] = original
+      it "emits a nicely formatted annotation to STDOUT" do
+        expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
+          #### Coverage
+
+          <dl class="flex flex-wrap m1 mxn2">
+          <div class="m2"><dt>All files</dt><dd>
+
+          **<span class="h2 regular">100</span>%**
+          0 of 0 lines
+
+          </dd></div>
+          </dl>
+        MESSAGE
+      end
+    end
+
+    context "inside Buildkite" do
+      before do
+        ENV["BUILDKITE"] = "true"
+      end
+
+      it "submits a nicely formatted annotation to the Agent" do
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", <<~MESSAGE)
+          #### Coverage
+
+          <dl class="flex flex-wrap m1 mxn2">
+          <div class="m2"><dt>All files</dt><dd>
+
+          **<span class="h2 regular">100</span>%**
+          0 of 0 lines
+
+          </dd></div>
+          </dl>
+        MESSAGE
+
+        formatter.format(result)
+      end
+    end
+  end
+
+  describe "customizing via env vars" do
+    describe "SIMPLECOV_BUILDKITE_TITLE" do
+      it "sets the title" do
+        ENV["SIMPLECOV_BUILDKITE_TITLE"] = "Ruby Coverage"
+
+        expect { formatter.format(result) }.to output(/#### Ruby Coverage/).to_stdout
+      end
+    end
+
+    describe "SIMPLECOV_BUILDKITE_CONTEXT" do
+      before do
+        ENV["BUILDKITE"] = "true"
+      end
+
+      it "sets the --context flag for the buildkite-agent CLI" do
+        ENV["SIMPLECOV_BUILDKITE_CONTEXT"] = "engine-1-coverage"
+
+        expected_context = "engine-1-coverage"
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", expected_context, any_args)
+
+        formatter.format(result)
+      end
+
+      it "escapes the input for shell usage" do
+        ENV["SIMPLECOV_BUILDKITE_CONTEXT"] = %(Jane's Coverage: Engines / "A")
+
+        expected_context = 'Jane\\\'s\ Coverage:\ Engines\ /\ \"A\"'
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", expected_context, any_args)
+
+        formatter.format(result)
       end
     end
   end

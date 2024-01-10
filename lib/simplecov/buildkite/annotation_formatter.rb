@@ -1,3 +1,5 @@
+require "shellwords"
+
 module SimpleCov::Buildkite
   class AnnotationFormatter
     GIT_ANNOTATION_FORMAT_REGEX = /^Files (?<action>changed|added) in (?<changeset>[a-zA-Z0-9.]+)$/
@@ -7,7 +9,7 @@ module SimpleCov::Buildkite
                                      .values_at(:git, :general)
 
       message = <<~MESSAGE
-        #### #{ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "Coverage")}
+        #### #{annotation_title}
 
         <dl class="flex flex-wrap m1 mxn2">
       MESSAGE
@@ -55,7 +57,7 @@ module SimpleCov::Buildkite
       if ENV['BUILDKITE']
         system 'buildkite-agent',
                'annotate',
-               '--context', ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov").gsub(/\s/,'').downcase,
+               '--context', annotation_context,
                '--style', 'info',
                message
       else
@@ -64,6 +66,14 @@ module SimpleCov::Buildkite
     end
 
     private
+
+    def annotation_title
+      ENV.fetch("SIMPLECOV_BUILDKITE_TITLE", "Coverage")
+    end
+
+    def annotation_context
+      Shellwords.shellescape(ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov"))
+    end
 
     def ignore_empty_groups(groups)
       groups.select do |_name, group|
@@ -98,7 +108,7 @@ module SimpleCov::Buildkite
 
       metric += <<~METRIC_VALUE
 
-        **<span class="h2 regular">#{format_float(element.covered_percent)}</span>%**  
+        **<span class="h2 regular">#{format_float(element.covered_percent)}</span>%**
         #{format_line_count(element)}
 
       METRIC_VALUE
