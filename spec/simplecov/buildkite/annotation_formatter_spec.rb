@@ -24,12 +24,12 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
   end
 
   describe "output" do
-    context 'outside of buildkite' do
+    context "outside of buildkite" do
       before do
         ENV.delete("BUILDKITE")
       end
 
-      it 'emits a nicely formatted annotation to STDOUT' do
+      it "emits a nicely formatted annotation to STDOUT" do
         expect { formatter.format(result) }.to output(<<~MESSAGE).to_stdout
           #### Coverage
 
@@ -45,13 +45,13 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
       end
     end
 
-    context 'inside Buildkite' do
+    context "inside Buildkite" do
       before do
         ENV["BUILDKITE"] = "true"
       end
 
-      it 'submits a nicely formatted annotation to the Agent' do
-        expect(formatter).to receive(:system).with('buildkite-agent', 'annotate', '--context', 'simplecov', '--style', 'info', <<~MESSAGE)
+      it "submits a nicely formatted annotation to the Agent" do
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", "simplecov", "--style", "info", <<~MESSAGE)
           #### Coverage
 
           <dl class="flex flex-wrap m1 mxn2">
