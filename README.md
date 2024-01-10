@@ -25,6 +25,10 @@ Or install it yourself as:
 
     $ gem install simplecov-buildkite
 
+### Runtime requirements
+
+:warning: In order to run this on Buildkite, `git` is required for performing various tasks. You'll need to make sure that this is installed and available.
+
 ## Usage
 
 Use it alongside your favourite formatter. For example, in [Rails] with [RSpec], add it in your `spec_helper.rb` like this:
