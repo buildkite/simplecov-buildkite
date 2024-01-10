@@ -1,3 +1,5 @@
+require "shellwords"
+
 module SimpleCov::Buildkite
   class AnnotationFormatter
     GIT_ANNOTATION_FORMAT_REGEX = /^Files (?<action>changed|added) in (?<changeset>[a-zA-Z0-9.]+)$/
@@ -70,7 +72,7 @@ module SimpleCov::Buildkite
     end
 
     def annotation_context
-      ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov")
+      Shellwords.shellescape(ENV.fetch("SIMPLECOV_BUILDKITE_CONTEXT", "simplecov"))
     end
 
     def ignore_empty_groups(groups)

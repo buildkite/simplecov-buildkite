@@ -92,6 +92,12 @@ RSpec.describe SimpleCov::Buildkite::AnnotationFormatter do
         formatter.format(result)
       end
 
+      it "escapes the input for shell usage" do
+        ENV["SIMPLECOV_BUILDKITE_CONTEXT"] = %(Jane's Coverage: Engines / "A")
+
+        expected_context = 'Jane\\\'s\ Coverage:\ Engines\ /\ \"A\"'
+        expect(formatter).to receive(:system).with("buildkite-agent", "annotate", "--context", expected_context, any_args)
+
         formatter.format(result)
       end
     end
