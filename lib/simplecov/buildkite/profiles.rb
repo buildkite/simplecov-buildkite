@@ -30,6 +30,10 @@ module SimpleCov::Buildkite::Profiles
         *refs
   end
 
+  def self.git_fetch(branch)
+    git 'fetch', 'origin', branch
+  end
+
   SimpleCov.profiles.define 'buildkite' do
     STDERR.puts 'SimpleCov::Buildkite profile initialising...'
     fail('Not running on Buildkite') unless ENV['BUILDKITE'] == 'true'
@@ -44,6 +48,7 @@ module SimpleCov::Buildkite::Profiles
     end
 
     STDERR.puts "base_branch_name=#{base_branch_name}"
+    git_fetch("#{base_branch_name}:#{base_branch_name}")
 
     current_commit = ENV['BUILDKITE_COMMIT']
 
