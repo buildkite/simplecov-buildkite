@@ -49,11 +49,11 @@ module SimpleCov::Buildkite::Profiles
 
     STDERR.puts "current_commit=#{current_commit}"
 
-    current_commit_short = git_short_commit(current_commit)
+    current_commit_short = SimpleCov::Buildkite::Profiles.git_short_commit(current_commit)
 
     STDERR.puts "current_commit_short=#{current_commit_short}"
 
-    changed_files_in_commit = git_diff_names(current_commit,
+    changed_files_in_commit = SimpleCov::Buildkite::Profiles.git_diff_names(current_commit,
                                              diff_filter: 'd')
 
     STDERR.puts "changed_files_in_commit.count=#{changed_files_in_commit.count}"
@@ -64,7 +64,7 @@ module SimpleCov::Buildkite::Profiles
       end
     end
 
-    added_files_in_commit = git_diff_names(current_commit,
+    added_files_in_commit = SimpleCov::Buildkite::Profiles.git_diff_names(current_commit,
                                            diff_filter: 'A')
 
     STDERR.puts "added_files_in_commit.count=#{added_files_in_commit.count}"
@@ -77,15 +77,15 @@ module SimpleCov::Buildkite::Profiles
 
     # Compare with the base branch if it's not this branch
     if base_branch_name && base_branch_name != branch_name
-      merge_base = git_merge_base(current_commit,
+      merge_base = SimpleCov::Buildkite::Profiles.git_merge_base(current_commit,
                                   base_branch_name)
 
-      merge_base_short = git_short_commit(merge_base)
+      merge_base_short = SimpleCov::Buildkite::Profiles.git_short_commit(merge_base)
 
       STDERR.puts "merge_base=#{merge_base}"
       STDERR.puts "merge_base_short=#{merge_base_short}"
 
-      changed_files_in_branch = git_diff_names(merge_base,
+      changed_files_in_branch = SimpleCov::Buildkite::Profiles.git_diff_names(merge_base,
                                                current_commit,
                                                diff_filter: 'd')
 
@@ -97,7 +97,7 @@ module SimpleCov::Buildkite::Profiles
         end
       end
 
-      added_files_in_branch = git_diff_names(merge_base,
+      added_files_in_branch = SimpleCov::Buildkite::Profiles.git_diff_names(merge_base,
                                              current_commit,
                                              diff_filter: 'A')
 

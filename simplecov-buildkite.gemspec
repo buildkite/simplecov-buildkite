@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
     "changelog_uri" => "#{spec.homepage}/blob/master/CHANGELOG.md",
   }
 
-  spec.add_dependency "simplecov", "~> 0.16"
+  spec.add_dependency "simplecov", "> 0.16"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 13.0"
